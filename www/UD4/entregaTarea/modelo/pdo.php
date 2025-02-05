@@ -63,20 +63,22 @@ function listaTareasPDO($id_usuario, $estado)
     
 }
 
-function nuevoUsuario($nombre, $apellidos, $username, $contrasena)
+function nuevoUsuario($nombre, $apellidos, $username, $contrasena, $rol)
 {
     try{
         $con = conectaPDO();
 
-
+    
+      
       
         $contrasenaCifrada = password_hash($contrasena, PASSWORD_DEFAULT);   //ciframos o contrasinal
 
-        $stmt = $con->prepare("INSERT INTO usuarios (nombre, apellidos, username, contrasena) VALUES (:nombre, :apellidos, :username, :contrasena)");
+        $stmt = $con->prepare("INSERT INTO usuarios (nombre, apellidos, username, contrasena, rol) VALUES (:nombre, :apellidos, :username, :contrasena, :rol)");
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':apellidos', $apellidos);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':contrasena', $contrasenaCifrada);
+        $stmt->bindParam(':rol', $rol);
         $stmt->execute();
         
         $stmt->closeCursor();

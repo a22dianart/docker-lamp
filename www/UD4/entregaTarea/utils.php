@@ -8,6 +8,7 @@ function filtraCampo($campo)
     return $campo;
 }
 
+
 function validarCampoTexto($campo)
 {
     return (!empty(filtraCampo($campo) && validarLargoCampo($campo, 2)));

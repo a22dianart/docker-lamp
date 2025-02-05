@@ -27,41 +27,50 @@
                         $apellidos = $_POST['apellidos'];
                         $username = $_POST['username'];
                         $contrasena = $_POST['contrasena'];
+                        $rol = isset($_POST['rol']) ? $_POST['rol'] : ''; 
                         $error = false;
-                        //verificar nombre
-                        if (!validarCampoTexto($nombre))
-                        {
+
+
+                        if (!validarCampoTexto($nombre)) {
                             $error = true;
                             echo '<div class="alert alert-danger" role="alert">El campo nombre es obligatorio y debe contener al menos 3 caracteres.</div>';
                         }
-                        //verificar apellidos
-                        if (!validarCampoTexto($apellidos))
-                        {
+
+
+                        if (!validarCampoTexto($apellidos)) {
                             $error = true;
                             echo '<div class="alert alert-danger" role="alert">El campo apellidos es obligatorio y debe contener al menos 3 caracteres.</div>';
                         }
-                        //verificar username
-                        if (!validarCampoTexto($username))
-                        {
+
+
+                        if (!validarCampoTexto($username)) {
                             $error = true;
                             echo '<div class="alert alert-danger" role="alert">El campo username es obligatorio y debe contener al menos 3 caracteres.</div>';
                         }
-                        //verificar contrasena
-                        if (!validaContrasena($contrasena))
-                        {
+
+
+                        if (!validaContrasena($contrasena)) {
                             $error = true;
                             echo '<div class="alert alert-danger" role="alert">El campo contraseña es obligatorio y debe ser compleja.</div>';
                         }
-                        if (!$error)
-                        {
+
+                        if ($rol !== "0" && $rol !== "1") {
+                            $error = true;
+                            echo '<div class="alert alert-danger" role="alert">Rol inválido seleccionado: ' . $rol . '</div>';
+                        }
+
+                        if (!$error) {
                             require_once('../modelo/pdo.php');
-                            $resultado = nuevoUsuario(filtraCampo($nombre), filtraCampo($apellidos), filtraCampo($username), $contrasena);
-                            if ($resultado[0])
-                            {
+                            $resultado = nuevoUsuario(
+                                filtraCampo($nombre),
+                                filtraCampo($apellidos),
+                                filtraCampo($username),
+                                $contrasena,
+                                $rol 
+                            );
+                            if ($resultado[0]) {
                                 echo '<div class="alert alert-success" role="alert">Usuario guardado correctamente.</div>';
-                            }
-                            else
-                            {
+                            } else {
                                 echo '<div class="alert alert-danger" role="alert">Ocurrió un error guardando el usuario: ' . $resultado[1] . '</div>';
                             }
                         }
