@@ -16,7 +16,7 @@ function listaUsuarios()
 {
     try {
         $con = conectaPDO();
-        $stmt = $con->prepare('SELECT id, username, nombre, apellidos FROM usuarios');
+        $stmt = $con->prepare('SELECT id, username, nombre, apellidos, rol  FROM usuarios');
         $stmt->execute();
 
         $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -93,38 +93,37 @@ function nuevoUsuario($nombre, $apellidos, $username, $contrasena)
     }
 }
 
-function actualizaUsuario($id, $nombre, $apellidos, $username, $contrasena)
+function actualizaUsuario($id, $nombre, $apellidos, $username, $contrasena, $rol)
 {
-    try{
+    try {
         $con = conectaPDO();
-        $sql = "UPDATE usuarios SET nombre = :nombre, apellidos = :apellidos, username = :username";
+        $sql = "UPDATE usuarios SET nombre = :nombre, apellidos = :apellidos, username = :username, rol = :rol";
 
-        if (isset($contrasena))
-        {
-            $sql = $sql . ', contrasena = :contrasena';
+        if (isset($contrasena) && !empty($contrasena)) {
+            $sql .= ', contrasena = :contrasena';
         }
 
-        $sql = $sql . ' WHERE id = :id';
+        $sql .= ' WHERE id = :id';
 
         $stmt = $con->prepare($sql);
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':apellidos', $apellidos);
         $stmt->bindParam(':username', $username);
-        if (isset($contrasena)) $stmt->bindParam(':contrasena', $contrasena);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':rol', $rol, PDO::PARAM_INT);
+
+        if (isset($contrasena) && !empty($contrasena)) {
+            $stmt->bindParam(':contrasena', $contrasena);
+        }
+
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
-        
         $stmt->closeCursor();
 
         return [true, null];
-    }
-    catch (PDOExcetion $e)
-    {
+    } catch (PDOException $e) {
         return [false, $e->getMessage()];
-    }
-    finally
-    {
+    } finally {
         $con = null;
     }
 }

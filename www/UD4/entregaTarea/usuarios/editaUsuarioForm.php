@@ -24,33 +24,31 @@
                     <form action="editaUsuario.php" method="POST" class="mb-5 w-50">
                         <?php
                         require_once('../modelo/pdo.php');
-                        if (!empty($_GET))
-                        {
+                        if (!empty($_GET)) {
                             $id = $_GET['id'];
                             $usuario = buscaUsuario($id);
-                            if (!empty($id) && $usuario)
-                            {
+                            if (!empty($id) && $usuario) {
                                 $nombre = $usuario['nombre'];
                                 $apellidos = $usuario['apellidos'];
                                 $username = $usuario['username'];
+                                $rol = $usuario['rol'];
                         ?>
                             <input type="hidden" name="id" value="<?php echo $id ?>">
                             <?php include_once('formUsuario.php'); ?>
+
+
                             <div class="mb-3">
                                 <label for="contrasena" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="contrasena" name="contrasena" >
+                                <input type="password" class="form-control" id="contrasena" name="contrasena">
                             </div>
+
                             <button type="submit" class="btn btn-primary">Actualizar</button>
                         <?php
+                            } else {
+                                echo '<div class="alert alert-danger" role="alert">No se pudo recuperar la información del usuario.</div>';
                             }
-                            else
-                            {
-                                echo '<div class="alert alert-danger" role="alert">No se pudo recuperar la información de la tarea.</div>';
-                            }
-                        }
-                        else
-                        {
-                            echo '<div class="alert alert-danger" role="alert">Debes acceder a través del listado de tareas.</div>';
+                        } else {
+                            echo '<div class="alert alert-danger" role="alert">Debes acceder a través del listado de usuarios.</div>';
                         }
                         ?>
                     </form>
