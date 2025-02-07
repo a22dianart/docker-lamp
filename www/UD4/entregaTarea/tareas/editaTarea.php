@@ -1,3 +1,18 @@
+<?php
+session_start();
+if (!isset($_SESSION["user"])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+$referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+if (strpos($referer, 'editaTareaForm.php') === false) {
+    header("Location: tareas.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION["user"])) {
+    header("Location: ../login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,21 +32,30 @@
                 <?php
 
                     $resultado = null;
-                    if (!empty($_GET))
-                    {
-                        $estado = isset($_GET['estado']) ? $_GET['estado'] : null;
-                        $id_usuario = $_GET['id_usuario'];
+
+
+                    $rol_usuario = $_SESSION["rol"];
+                    $id_usuario_loggeado = $_SESSION["user_id"];
+
+        
+                    if ($rol_usuario == 1) {
+                        if (!empty($_GET)) {
+                            $estado = isset($_GET['estado']) ? $_GET['estado'] : null;
+                            $id_usuario = $_GET['id_usuario'];
+                            require_once('../modelo/pdo.php');
+                            $resultado = listaTareasPDO($id_usuario, $estado);  
+                        } else {
+                            require_once('../modelo/mysqli.php');
+                            $resultado = listaTareas();  
+                        }
+                    } else {
                         require_once('../modelo/pdo.php');
-                        $resultado = listaTareasPDO($id_usuario, $estado);
+                        $estado = isset($_GET['estado']) ? $_GET['estado'] : null;
+                        $resultado = listaTareasPDO($id_usuario_loggeado, $estado);  
                     }
-                    else
-                    {
-                        require_once('../modelo/mysqli.php');
-                        $resultado = listaTareas();
-                    }
-                    
-                    if ($resultado && $resultado[0])
-                    {
+
+
+                    if ($resultado && $resultado[0]) {
                 ?>
                     <div class="table">
                         <table class="table table-sm table-striped table-hover">
@@ -55,10 +72,8 @@
                             <tbody>
                                 <?php
                                     $lista = $resultado[1];
-                                    if (count($lista) > 0)
-                                    {
-                                        foreach ($lista as $tarea)
-                                        {
+                                    if (count($lista) > 0) {
+                                        foreach ($lista as $tarea) {
                                             echo '<tr>';
                                             echo '<td>' . $tarea['id'] . '</td>';
                                             echo '<td>' . $tarea['titulo'] . '</td>';
@@ -71,9 +86,7 @@
                                             echo '</td>';
                                             echo '</tr>';
                                         }
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         echo '<tr><td colspan="100">No hay tareas</td></tr>';
                                     }
                                 ?>
@@ -81,9 +94,7 @@
                         </table>
                     </div>
                 <?php
-                    }
-                    else
-                    {
+                    } else {
                         echo '<div class="alert alert-warning" role="alert">' . $resultado[1] . '</div>';
                     }
                 ?>

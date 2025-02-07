@@ -1,3 +1,19 @@
+<?php
+session_start();
+if (!isset($_SESSION["user"])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+$referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+if (strpos($referer, 'tareas.php') === false) {
+    // Si no viene de tareas.php, redirigir a otra página
+    header("Location: tareas.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

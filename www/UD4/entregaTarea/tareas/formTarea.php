@@ -15,17 +15,29 @@
         <option value="completada" <?php echo isset($estado) && $estado == 'completada' ? 'selected' : '' ?> >Completada</option>
     </select>
 </div>
+
 <div class="mb-3">
     <label for="id_usuario" class="form-label">Usuario</label>
-    <select class="form-select" id="id_usuario" name="id_usuario" required>
-        <option value="" <?php echo isset($id_usuario) ? '' : 'selected' ?> disabled>Seleccione el usuario</option>
-        <?php
-            require_once('../modelo/pdo.php');
-            $usuarios = listaUsuarios()[1];
-            foreach ($usuarios as $usuario) { ?>
-                <option value="<?php echo ($usuario['id']); ?>" <?php echo isset($id_usuario) && $id_usuario == $usuario['id'] ? 'selected' : '' ?> >
-                    <?php echo $usuario['username']; ?>
-                </option>
-        <?php } ?>
-    </select>
+    <?php 
+    $rol_usuario = $_SESSION["rol"]; 
+    ?>
+    
+    <?php if ($rol_usuario != 1): ?>
+   
+        <input type="text" class="form-control" id="id_usuario" value="<?php echo $_SESSION['user']; ?>" disabled>
+        <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['user_id']; ?>">
+    <?php else: ?>
+
+        <select class="form-select" id="id_usuario" name="id_usuario" required>
+            <option value="" <?php echo isset($id_usuario) ? '' : 'selected' ?> disabled>Seleccione el usuario</option>
+            <?php
+                require_once('../modelo/pdo.php');
+                $usuarios = listaUsuarios()[1]; 
+                foreach ($usuarios as $usuario) { ?>
+                    <option value="<?php echo ($usuario['id']); ?>" <?php echo isset($id_usuario) && $id_usuario == $usuario['id'] ? 'selected' : '' ?> >
+                        <?php echo $usuario['username']; ?>
+                    </option>
+            <?php } ?>
+        </select>
+    <?php endif; ?>
 </div>

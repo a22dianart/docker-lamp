@@ -1,3 +1,17 @@
+<?php
+session_start();
+if (!isset($_SESSION["user"])) {
+    header("Location: ../login.php");
+    exit();
+    
+}
+
+if ($_SESSION["rol"] != 1) {
+    header("Location: ../index.php"); 
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
