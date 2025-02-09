@@ -1,5 +1,4 @@
 <?php
-
 require_once('../modelo/pdo.php');
 session_start();
 if (!isset($_SESSION["user"])) {
@@ -40,7 +39,7 @@ if (strpos($referer, 'tareas.php') === false) {
                 <div class="container justify-content-between">
                     <div class="mb-5 w-50">
                         <?php
-                        require_once('../modelo/mysqli.php');
+                        require_once('../modelo/mysqli.php'); // Asegúrate de que este archivo contiene las funciones necesarias
                         if (!empty($_GET)) {
                             $id = $_GET['id'];
                             $tarea = buscaTarea($id);
@@ -50,7 +49,7 @@ if (strpos($referer, 'tareas.php') === false) {
                                 $estado = $tarea['estado'];
                                 $id_usuario = $tarea['id_usuario'];
 
-                                // Llamamos a la función buscaUsuario para obtener los detalles del usuario
+                                // Obtener datos del usuario
                                 $usuario = buscaUsuario($id_usuario);
                                 if ($usuario) {
                                     $nombre_usuario = $usuario['username'];
@@ -59,26 +58,30 @@ if (strpos($referer, 'tareas.php') === false) {
                                 }
                         ?>
                             <div class="mb-3">
-                                <label for="titulo" class="form-label">Título</label>
-                                <input type="text" class="form-control" id="titulo" value="<?php echo $titulo ?>" readonly>
+                                <label for="titulo" class="form-label">Título: <?php echo $titulo ?></label>
                             </div>
 
                             <div class="mb-3">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <textarea class="form-control" id="descripcion" rows="3" readonly><?php echo $descripcion ?></textarea>
+                                <label for="descripcion" class="form-label">Descripción: <?php echo $descripcion ?></label>
                             </div>
 
                             <div class="mb-3">
-                                <label for="estado" class="form-label">Estado</label>
-                                <input type="text" class="form-control" id="estado" value="<?php echo $estado ?>" readonly>
+                                <label for="estado" class="form-label">Estado: <?php echo $estado ?></label>
                             </div>
 
                             <div class="mb-3">
-                                <label for="usuario" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" value="<?php echo $nombre_usuario; ?>" readonly>
+                                <label for="usuario" class="form-label">Usuario: <?php echo $nombre_usuario; ?></label>
                             </div>
 
-                            <a href="tareas.php" class="btn btn-primary">Volver al listado de tareas</a>
+                            <div class="col-md-4 mb-4">
+                                 <a href="subidaFichForm.php?id=<?php echo $tarea['id']; ?>" class="card shadow-sm text-decoration-none">
+                                <div class="card-body text-center">
+                                <h5 class="card-title">+</h5>
+                                <p class="card-text">Haz clic para añadir un archivo</p>
+                                </div>
+                                 </a>
+                            </div>
+
                         <?php
                             } else {
                                 echo '<div class="alert alert-danger" role="alert">No se pudo recuperar la información de la tarea.</div>';
