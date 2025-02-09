@@ -1,5 +1,7 @@
-
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION["user"])) {
     header("Location: /UD4/entregaTarea/login.php"); 
@@ -7,9 +9,18 @@ if (!isset($_SESSION["user"])) {
 }
 
 $rol = $_SESSION['rol']; 
-?>
 
-<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+$tema = 'light';
+if (isset($_COOKIE['tema'])) {
+    $tema = $_COOKIE['tema'];
+}
+
+$navClass = "col-md-3 col-lg-2 d-md-block sidebar";
+if ($tema === 'light') {
+    $navClass .= " bg-light";
+}
+?>
+<nav class="<?= $navClass ?>">
     <div class="position-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -49,21 +60,21 @@ $rol = $_SESSION['rol'];
                     Lista de tareas
                 </a>
             </li>
-        
             <li class="nav-item">
                 <a class="nav-link" href="/UD4/entregaTarea/logout.php">
-                 Salir
+                    Salir
                 </a>
             </li>
             <li class="nav-item mt-3">
-                <select id="theme-selector" class="form-select w-50 ms-3">
-                <option value="dark">Claro</option>
-                    <option value="dark">Oscuro</option>
-                    <option value="auto">Automático</option>
-                </select>
+                <form method="POST" action="/UD4/entregaTarea/tema.php" class="w-50 ms-3">
+                    <select id="tema" name="tema" class="form-select mb-2" aria-label="Selector de tema">
+                        <option value="light" <?= $tema === 'light' ? 'selected' : '' ?>>Claro</option>
+                        <option value="dark" <?= $tema === 'dark' ? 'selected' : '' ?>>Oscuro</option>
+                        <option value="auto" <?= $tema === 'auto' ? 'selected' : '' ?>>Automático</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary w-100">Aplicar</button>
+                </form>
             </li>
-            <button class="btn btn-primary w-50 ms-3 mt-2 mb-2">Aplicar</button>
-            
         </ul>
     </div>
 </nav>

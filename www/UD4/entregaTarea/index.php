@@ -8,15 +8,19 @@ if (!isset($_SESSION["user"])) {
 
 
 
+<?php
+$tema = isset($_COOKIE['tema']) ? $_COOKIE['tema'] : 'light';
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="<?= htmlspecialchars($tema) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UD4. Tarea</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>UD 4</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
 
     <?php include_once('vista/header.php'); ?>
 
