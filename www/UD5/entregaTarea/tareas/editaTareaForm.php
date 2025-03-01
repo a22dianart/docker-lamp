@@ -1,5 +1,6 @@
 <?php
     require_once('../login/sesiones.php');
+
 ?>
     <?php include_once('../vista/header.php'); ?>
 
@@ -27,10 +28,10 @@
                                     $tarea = buscaTarea($id);
                                     if ($tarea)
                                     {
-                                        $titulo = $tarea['titulo'];
-                                        $descripcion = $tarea['descripcion'];
-                                        $estado = $tarea['estado'];
-                                        $id_usuario = $tarea['id_usuario'];
+                                        $titulo = $tarea->getTitulo();
+                                        $descripcion = $tarea->getDescripcion();
+                                        $estado = $tarea->getEstado();
+                                        $id_usuario = $tarea->getUsuario()->getId();
                                     ?>
                                         <input type="hidden" name="id" value="<?php echo $id ?>">
                                         <?php include_once('formTarea.php'); ?>

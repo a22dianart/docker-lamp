@@ -27,8 +27,8 @@ if (checkAdmin())
                 require_once('../modelo/pdo.php');
                 $usuarios = listaUsuarios()[1];
                 foreach ($usuarios as $usuario) { ?>
-                    <option value="<?php echo ($usuario['id']); ?>" <?php echo isset($id_usuario) && $id_usuario == $usuario['id'] ? 'selected' : '' ?> >
-                        <?php echo $usuario['username']; ?>
+                    <option value="<?php echo ($usuario->getId()); ?>" <?php echo isset($id_usuario) && $id_usuario == $usuario->getId() ? 'selected' : '' ?> >
+                        <?php echo $usuario->getUsername(); ?>
                     </option>
             <?php } ?>
         </select>

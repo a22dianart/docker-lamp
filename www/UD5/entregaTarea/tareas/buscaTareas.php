@@ -24,8 +24,8 @@
                                     require_once('../modelo/pdo.php');
                                     $usuarios = listaUsuarios()[1];
                                     foreach ($usuarios as $usuario) { ?>
-                                        <option value="<?php echo ($usuario['id']); ?>">
-                                            <?php echo $usuario['username']; ?>
+                                        <option value="<?php echo ($usuario->getId()); ?>">
+                                            <?php echo $usuario->getUsername(); ?>
                                         </option>
                                 <?php } ?>
                             </select>

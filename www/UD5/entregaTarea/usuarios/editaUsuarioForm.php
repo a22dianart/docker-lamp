@@ -25,10 +25,10 @@
                             $usuario = buscaUsuario($id);
                             if (!empty($id) && $usuario)
                             {
-                                $nombre = $usuario['nombre'];
-                                $apellidos = $usuario['apellidos'];
-                                $username = $usuario['username'];
-                                $rol = $usuario['rol'];
+                            $nombre = $usuario->getNombre();
+                            $apellidos = $usuario->getApellidos();
+                            $username = $usuario->getUsername();
+                            $rol = $usuario->getRol();
                         ?>
                             <input type="hidden" name="id" value="<?php echo $id ?>">
                             <?php include_once('formUsuario.php'); ?>

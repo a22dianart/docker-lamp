@@ -169,7 +169,6 @@ function buscaUsername($username)
         $con = null;
     }
 }
-
 function listaTareasPDO($id_usuario, $estado)
 {
     try {
@@ -188,6 +187,12 @@ function listaTareasPDO($id_usuario, $estado)
         $tareas = [];
         while ($row = $stmt->fetch()) {
             $usuario = buscaUsuario($row['id_usuario']);
+            
+            // Si el usuario no existe, creamos uno con datos vacíos
+            if (!$usuario) {
+                $usuario = new Usuario(0, "Usuario no encontrado", "", "", "", "");
+            }
+
             $tareas[] = new Tarea(
                 (int)$row['id'],
                 $row['titulo'],
@@ -206,118 +211,6 @@ function listaTareasPDO($id_usuario, $estado)
     }
 }
 
-function nuevaTareaPDO(Tarea $tarea)
-{
-    try {
-        $con = conectaPDO();
-        $stmt = $con->prepare("INSERT INTO tareas (titulo, descripcion, estado, id_usuario) VALUES (:titulo, :descripcion, :estado, :id_usuario)");
-        $titulo      = $tarea->getTitulo();
-        $descripcion = $tarea->getDescripcion();
-        $estado      = $tarea->getEstado();
-        $id_usuario  = $tarea->getUsuario()->getId();
-
-        $stmt->bindParam(':titulo', $titulo);
-        $stmt->bindParam(':descripcion', $descripcion);
-        $stmt->bindParam(':estado', $estado);
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->execute();
-        $stmt->closeCursor();
-
-        $tarea->setId((int)$con->lastInsertId());
-        return [true, $tarea];
-    }
-    catch (PDOException $e) {
-        return [false, $e->getMessage()];
-    }
-    finally {
-        $con = null;
-    }
-}
-
-function actualizaTareaPDO(Tarea $tarea)
-{
-    try {
-        $con = conectaPDO();
-        $sql = "UPDATE tareas SET titulo = :titulo, descripcion = :descripcion, estado = :estado, id_usuario = :id_usuario WHERE id = :id";
-        $stmt = $con->prepare($sql);
-        $titulo      = $tarea->getTitulo();
-        $descripcion = $tarea->getDescripcion();
-        $estado      = $tarea->getEstado();
-        $id_usuario  = $tarea->getUsuario()->getId();
-        $id          = $tarea->getId();
-
-        $stmt->bindParam(':titulo', $titulo);
-        $stmt->bindParam(':descripcion', $descripcion);
-        $stmt->bindParam(':estado', $estado);
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        $stmt->closeCursor();
-
-        return [true, $tarea];
-    }
-    catch (PDOException $e) {
-        return [false, $e->getMessage()];
-    }
-    finally {
-        $con = null;
-    }
-}
-
-function borraTarea($id)
-{
-    try {
-        $con = conectaPDO();
-        $stmt = $con->prepare("DELETE FROM tareas WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        $stmt->closeCursor();
-        return [true, 'Tarea borrada correctamente.'];
-    }
-    catch (PDOException $e) {
-        return [false, $e->getMessage()];
-    }
-    finally {
-        $con = null;
-    }
-}
-
-function buscaTarea($id)
-{
-    try {
-        $con = conectaPDO();
-        $stmt = $con->prepare("SELECT * FROM tareas WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        if ($stmt->rowCount() == 1) {
-            $row = $stmt->fetch();
-            $usuario = buscaUsuario($row['id_usuario']);
-            return new Tarea(
-                (int)$row['id'],
-                $row['titulo'],
-                $row['descripcion'],
-                $row['estado'],
-                $usuario
-            );
-        }
-        return null;
-    }
-    catch (PDOException $e) {
-        return null;
-    }
-    finally {
-        $con = null;
-    }
-}
-
-function esPropietarioTarea($idUsuario, $idTarea)
-{
-    $tarea = buscaTarea($idTarea);
-    if ($tarea) {
-        return $tarea->getUsuario()->getId() == $idUsuario;
-    } else {
-        return false;
-    }
-}
 
 function listaFicheros($id_tarea)
 {
