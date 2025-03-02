@@ -67,7 +67,7 @@
                                             echo '<td>' . $tarea->getEstado() . '</td>';
                                             echo '<td>' . $tarea->getUsuario()->getUsername() . '</td>';
                                             echo '<td>';
-                                            echo '<a class="btn btn-sm btn-outline-primary ms-2" href="tarea.php?id=' . $tarea->getId() . '" role="button">Mostrar</a>';
+                                            echo '<a class="btn btn-sm btn-outline-primary ms-2" href="verTarea.php?id=' . $tarea->getId() . '" role="button">Mostrar</a>';
                                             echo '<a class="btn btn-sm btn-outline-success ms-2" href="editaTareaForm.php?id=' . $tarea->getId() . '" role="button">Editar</a>';
                                             echo '<a class="btn btn-sm btn-outline-danger ms-2" href="borraTarea.php?id=' . $tarea->getId() . '" role="button">Borrar</a>';
                                             echo '</td>';
