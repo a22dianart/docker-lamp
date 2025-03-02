@@ -23,7 +23,7 @@ if (!empty($_GET))
             }
             else
             {
-                array_push($messages, 'No se pudo borrar la tarea.');
+                array_push($messages, 'No se pudo borrar la tarea. ' . $resultado[1]);
             }
         }
         else

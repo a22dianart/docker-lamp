@@ -242,25 +242,33 @@ function actualizaTarea(Tarea $tarea)
     }
 }
 
-
-function borraTarea($id)
-{
+function borraTarea($id) { //mellorada
     try {
         $conexion = conectaTareas();
-        if ($conexion->connect_error) {
-            return [false, $conexion->error];
+        
+        // Eliminar primero los archivos relacionados
+        $stmt = $conexion->prepare("DELETE FROM ficheros WHERE id_tarea = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        
+        // Ahora elimina la tarea
+        $stmt = $conexion->prepare("DELETE FROM tareas WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            return [true, "Tarea eliminada"];
         } else {
-            $stmt = $conexion->prepare("DELETE FROM tareas WHERE id = ?");
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-            return [true, 'Tarea borrada correctamente.'];
+            return [false, "No se encontró la tarea o no se eliminó"];
         }
     } catch (mysqli_sql_exception $e) {
-        return [false, $e->getMessage()];
+        return [false, "Error al eliminar tarea: " . $e->getMessage()];
     } finally {
         cerrarConexion($conexion);
     }
 }
+
+
 
 
 function buscaTarea($id)

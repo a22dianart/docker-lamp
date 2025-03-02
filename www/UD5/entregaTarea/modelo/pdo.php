@@ -242,30 +242,28 @@ function listaFicheros($id_tarea)
 }
 
 
-function nuevoFichero(Fichero $fichero)
+function nuevoFichero($file, $nombre, $descripcion, $idTarea)
 {
-    try {
+    try
+    {
         $con = conectaPDO();
-        $stmt = $con->prepare("INSERT INTO ficheros (nombre, file, descripcion, id_tarea) VALUES (:nombre, :file, :descripcion, :id_tarea)");
-        $nombre      = $fichero->getNombre();
-        $file        = $fichero->getFile();
-        $descripcion = $fichero->getDescripcion();
-        $id_tarea    = $fichero->getTarea()->getId();
-
-        $stmt->bindParam(':nombre', $nombre);
+        $stmt = $con->prepare("INSERT INTO ficheros (nombre, file, descripcion, id_tarea) VALUES (:nombre, :file, :descripcion, :idTarea)");
         $stmt->bindParam(':file', $file);
+        $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':descripcion', $descripcion);
-        $stmt->bindParam(':id_tarea', $id_tarea);
+        $stmt->bindParam(':idTarea', $idTarea);
         $stmt->execute();
+        
         $stmt->closeCursor();
 
-        $fichero->setId((int)$con->lastInsertId());
-        return [true, $fichero];
+        return [true, null];
     }
-    catch (PDOException $e) {
+    catch (PDOExcetion $e)
+    {
         return [false, $e->getMessage()];
     }
-    finally {
+    finally
+    {
         $con = null;
     }
 }

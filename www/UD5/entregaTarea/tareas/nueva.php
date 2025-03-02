@@ -2,6 +2,7 @@
 require_once('../login/sesiones.php');
 require_once('../utils.php');
 require_once('../modelo/mysqli.php');
+require_once('../modelo/pdo.php');
 
 $titulo = $_POST['titulo'];
 $descripcion = $_POST['descripcion'];
@@ -43,7 +44,11 @@ if (!esNumeroValido($id_usuario))
 
 if (!$error)
 {
-    $resultado = nuevaTarea(filtraCampo($titulo), filtraCampo($descripcion), filtraCampo($estado), filtraCampo($id_usuario));
+
+    $tarea = new Tarea(1, filtraCampo($titulo), filtraCampo($descripcion), filtraCampo($estado), buscaUsuario($id_usuario));
+
+
+    $resultado = nuevaTarea($tarea);
     if ($resultado[0])
     {
         $response = 'success';

@@ -45,7 +45,9 @@ if (!esNumeroValido($id_usuario))
 if (!$error)
 {
     require_once('../modelo/mysqli.php');
-    $resultado = actualizaTarea($id, filtraCampo($titulo), filtraCampo($descripcion), filtraCampo($estado), $id_usuario);
+    require_once('../modelo/pdo.php');
+    $tarea = new Tarea($id, filtraCampo($titulo), filtraCampo($descripcion), filtraCampo($estado),  buscaUsuario($id_usuario) );
+    $resultado = actualizaTarea($tarea);
     if ($resultado[0])
     {
         $response = 'success';

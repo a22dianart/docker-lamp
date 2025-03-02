@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
             {
                 $response = 'success';
                 array_push($messages, 'Archivo subido correctamente.');
-                $location = '../tareas/tarea.php?id=' . $id_tarea;
+                $location = '../tareas/verTarea.php?id=' . $id_tarea;
             }
             else
             {
