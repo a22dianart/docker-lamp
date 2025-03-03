@@ -104,7 +104,10 @@
                                     <div class="container my-4">
                                         <div class="row g-3">
                                             <!-- Tarjeta de archivo -->
-                                            <?php //ESTO ASI DE MOMENTO
+                                            <?php  
+// Obtener los archivos asociados a la tarea
+$ficheros = buscarFicherosTarea($id);
+
 foreach ($ficheros as $fichero) {
     // Verificamos que $fichero es un objeto y tiene los métodos disponibles
     if (is_object($fichero) && $fichero->getFile() && $fichero->getNombre() && $fichero->getDescripcion()) {
@@ -114,11 +117,13 @@ foreach ($ficheros as $fichero) {
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="<?= getFileIcon($fichero->getFile()); ?> me-3 fs-4"></i>
-                        <?php echo $fichero->getNombre(); ?> 
+                        <?php echo htmlspecialchars($fichero->getNombre(), ENT_QUOTES, 'UTF-8'); ?> 
                     </h5>
-                    <p class="card-text text-muted text-truncate"><?php echo $fichero->getDescripcion(); ?></p>
+                    <p class="card-text text-muted text-truncate">
+                        <?php echo htmlspecialchars($fichero->getDescripcion(), ENT_QUOTES, 'UTF-8'); ?>
+                    </p>
                     <div class="d-flex gap-2">
-                        <a href="../<?php echo $fichero->getFile(); ?>" class="btn btn-sm btn-outline-primary" download>Descargar</a>
+                        <a href="../<?php echo htmlspecialchars($fichero->getFile(), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-sm btn-outline-primary" download>Descargar</a>
                         <a href="../ficheros/borrar.php?id=<?php echo $fichero->getId(); ?>" class="btn btn-sm btn-outline-danger">Eliminar</a>
                     </div>
                 </div>
@@ -127,7 +132,13 @@ foreach ($ficheros as $fichero) {
 <?php
     }
 }
+
+// Si no hay archivos, mostrar un mensaje
+if (empty($ficheros)) {
+    echo '<p class="text-muted">No hay archivos adjuntos para esta tarea.</p>';
+}
 ?>
+
 
 
                                             

@@ -297,6 +297,36 @@ function buscaFichero($id)
     }
 }
 
+function buscarFicherosTarea($id_tarea) {
+    try {
+        $con = conectaPDO();
+        $stmt = $con->prepare("SELECT * FROM ficheros WHERE id_tarea = :id_tarea");
+        $stmt->execute([':id_tarea' => $id_tarea]);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $ficheros = [];
+
+        while ($row = $stmt->fetch()) {
+            $tarea = buscaTarea($row['id_tarea']); // Obtener la tarea asociada
+            $ficheros[] = new Fichero(
+                (int)$row['id'],
+                $row['nombre'],
+                $row['file'],
+                $row['descripcion'],
+                $tarea
+            );
+        }
+
+        return $ficheros; // Devuelve un array de objetos Fichero
+
+    } catch (PDOException $e) {
+        return []; // Devuelve un array vacío en caso de error
+    } finally {
+        $con = null;
+    }
+}
+
+
 function borraFichero($id)
 {
     try {

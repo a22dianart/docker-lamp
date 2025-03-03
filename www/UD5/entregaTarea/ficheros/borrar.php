@@ -13,12 +13,12 @@ if (!empty($_GET))
     $archivo = buscaFichero($id);
     if (!empty($id) && $archivo)
     {
-        $id_tarea = $archivo['id_tarea'];
-        if (checkAdmin() || esPropietarioTarea($_SESSION['usuario']['id'], $archivo['id_tarea']))
+        $id_tarea = $archivo->getTarea()->getId();
+        if (checkAdmin() || esPropietarioTarea($_SESSION['usuario']['id'], $archivo->getTarea()->getId()))
         {
-            $ruta = '../' . $archivo['file'];
+            $ruta = '../' . $archivo->getFile();
             $borrado = borrarArchivo($ruta);
-            if ($borrado) $borrado = borraFichero($archivo['id']);
+            if ($borrado) $borrado = borraFichero($archivo->getId());
 
             if ($borrado)
             {
@@ -48,7 +48,7 @@ else
 
 $_SESSION['status'] = $status;
 $_SESSION['messages'] = $messages;
-header("Location: ../tareas/tarea.php?id=" . $id_tarea);
+header("Location: ../tareas/verTarea.php?id=" . $id_tarea);
 
 function borrarArchivo($archivo)
 {
