@@ -9,8 +9,8 @@ class Fichero {
     private Tarea $tarea;
     
 
-    public const FORMATOS = ['pdf', 'doc', 'docx', 'jpg', 'png'];//formatos permitidos
-    public const MAX_SIZE = 2097152;//tamaño máximo en bytes 
+    public const FORMATOS = ['pdf', 'doc', 'docx', 'jpg', 'png'];
+    public const MAX_SIZE = 2097152;
 
     
     public function __construct(int $id, string $nombre, string $file, string $descripcion, Tarea $tarea) {

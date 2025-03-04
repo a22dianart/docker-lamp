@@ -242,16 +242,14 @@ function actualizaTarea(Tarea $tarea)
     }
 }
 
-function borraTarea($id) { //mellorada
+function borraTarea(Tarea $tarea) { 
     try {
         $conexion = conectaTareas();
-        
-        // Eliminar primero los archivos relacionados
+        $id = $tarea->getId(); 
         $stmt = $conexion->prepare("DELETE FROM ficheros WHERE id_tarea = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        
-        // Ahora elimina la tarea
+
         $stmt = $conexion->prepare("DELETE FROM tareas WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -267,6 +265,7 @@ function borraTarea($id) { //mellorada
         cerrarConexion($conexion);
     }
 }
+
 
 
 
@@ -303,15 +302,11 @@ function buscaTarea($id)
 }
 
 
-function esPropietarioTarea($idUsuario, $idTarea)
+function esPropietarioTarea(Usuario $usuario, Tarea $tarea)
 {
-    $tarea = buscaTarea($idTarea);
-    if ($tarea) {
-        return $tarea->getUsuario()->getId() == $idUsuario;
-    } else {
-        return false;
-    }
+    return $tarea->getUsuario()->getId() === $usuario->getId();
 }
+
 
 
 function buscaUsuarioMysqli($id)

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/Usuario.php';
 require_once __DIR__ . '/Tarea.php';
 require_once __DIR__ . '/Fichero.php';
+
 function conectaPDO()
 {
     $servername = $_ENV['DATABASE_HOST'];
@@ -44,29 +45,33 @@ function listaUsuarios()
     }
 }
 
-function nuevoUsuario($nombre, $apellidos, $username, $contrasena, $rol = 0)
+function nuevoUsuario(Usuario $usuario) //insert de Usuario
 {
     try {
         $con = conectaPDO();
-        $stmt = $con->prepare("INSERT INTO usuarios (nombre, apellidos, username, rol, contrasena) VALUES (:nombre, :apellidos, :username, :rol, :contrasena)");
-        $stmt->bindParam(':nombre', $nombre);
-        $stmt->bindParam(':apellidos', $apellidos);
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':rol', $rol);
-        $hasheado = password_hash($contrasena, PASSWORD_DEFAULT);
-        $stmt->bindParam(':contrasena', $hasheado);
-        $stmt->execute();
-        $stmt->closeCursor();
+        $stmt = $con->prepare("INSERT INTO usuarios (nombre, apellidos, username, rol, contrasena) 
+                               VALUES (:nombre, :apellidos, :username, :rol, :contrasena)");
+
+        $hasheado = password_hash($usuario->getContrasena(), PASSWORD_DEFAULT);
+
+        $stmt->execute([
+            ':nombre' => $usuario->getNombre(),
+            ':apellidos' => $usuario->getApellidos(),
+            ':username' => $usuario->getUsername(),
+            ':rol' => $usuario->getRol(),
+            ':contrasena' => $hasheado
+        ]);
 
         return [true, null];
-    }
+    } 
     catch (PDOException $e) {
         return [false, $e->getMessage()];
-    }
+    } 
     finally {
         $con = null;
     }
 }
+
 
 function actualizaUsuario($id, $nombre, $apellidos, $username, $contrasena, $rol)
 {
@@ -101,18 +106,22 @@ function actualizaUsuario($id, $nombre, $apellidos, $username, $contrasena, $rol
     }
 }
 
-function borraUsuario($id)
+function borraUsuario(Usuario $usuario) //delete de Usuario
 {
     try {
         $con = conectaPDO();
         $con->beginTransaction();
+
         $stmt = $con->prepare('DELETE FROM tareas WHERE id_usuario = :id');
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([':id' => $usuario->getId()]);
+
         $stmt = $con->prepare('DELETE FROM usuarios WHERE id = :id');
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([':id' => $usuario->getId()]);
+
         return [$con->commit(), ''];
     }
     catch (PDOException $e) {
+        $con->rollBack(); 
         return [false, $e->getMessage()];
     }
     finally {
@@ -120,7 +129,8 @@ function borraUsuario($id)
     }
 }
 
-function buscaUsuario($id)
+
+function buscaUsuario($id) //select de Usuario
 {
     try {
         $con = conectaPDO();
@@ -188,7 +198,6 @@ function listaTareasPDO($id_usuario, $estado)
         while ($row = $stmt->fetch()) {
             $usuario = buscaUsuario($row['id_usuario']);
             
-            // Si el usuario no existe, creamos uno con datos vacíos
             if (!$usuario) {
                 $usuario = new Usuario(0, "Usuario no encontrado", "", "", "", "");
             }

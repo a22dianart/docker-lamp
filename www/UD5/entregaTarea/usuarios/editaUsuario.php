@@ -13,25 +13,25 @@ $error = false;
 
 $message = 'Error creando el usuario.';
 
-//verificar nombre
+
 if (!validarCampoTexto($nombre))
 {
     $error = true;
     $message = 'El campo nombre es obligatorio y debe contener al menos 3 caracteres.';
 }
-//verificar apellidos
+
 if (!$error && !validarCampoTexto($apellidos))
 {
     $error = true;
     $message = 'El campo apellidos es obligatorio y debe contener al menos 3 caracteres.';
 }
-//verificar username
+
 if (!$error && !validarCampoTexto($username))
 {
     $error = true;
     $message = 'El campo username es obligatorio y debe contener al menos 3 caracteres.';
 }
-//verificar contrasena
+
 if (!$error && !empty($contrasena) && !validaContrasena($contrasena))
 {
     $error = true;

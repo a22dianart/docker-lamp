@@ -2,6 +2,7 @@
 
 require_once('../login/sesiones.php');    
 require_once('../modelo/mysqli.php');
+require_once('../modelo/pdo.php');
 
 $response = 'error';
 $messages = array();
@@ -13,9 +14,9 @@ if (!empty($_GET))
     $id = $_GET['id'];
     if (!empty($id))
     {
-        if (checkAdmin() || esPropietarioTarea($_SESSION['usuario']['id'], $id))
+        if (checkAdmin() || esPropietarioTarea(buscaUsuario($_SESSION['usuario']['id']), buscaTarea($id)))
         {
-            $resultado = borraTarea($id);
+            $resultado = borraTarea(buscaTarea($id));
             if ($resultado[0])
             {
                 $response = 'success';

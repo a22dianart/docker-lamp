@@ -34,7 +34,7 @@ function getFileIcon($filename)
                 if (!empty($_GET)) {
                     $id = $_GET['id'];
                     if (!empty($id)) {
-                        if (checkAdmin() || esPropietarioTarea($_SESSION['usuario']['id'], $id)) {
+                        if (checkAdmin() || esPropietarioTarea(buscaUsuario($_SESSION['usuario']['id']), buscaTarea($id))) {
                             $tarea = buscaTarea($id);
                             $usuario = buscaUsuarioMysqli($tarea->getUsuario()->getId());
                             if ($tarea) {

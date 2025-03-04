@@ -12,7 +12,7 @@ if (!empty($_GET))
     $id = $_GET['id'];
     if (!empty($id))
     {
-        $resultado = borraUsuario($id);
+        $resultado = borraUsuario(buscaUsuario($id));
         if ($resultado[0])
         {
             $message = 'Usuario borrado correctamente.';

@@ -1,5 +1,7 @@
 <?php
 require_once('../login/sesiones.php');
+require_once('../modelo/Usuario.php');
+
 if (!checkAdmin()) redirectIndex();
     
 require_once('../utils.php');
@@ -39,7 +41,7 @@ if (!$error && !validaContrasena($contrasena))
 if (!$error)
 {
     require_once('../modelo/pdo.php');
-    $resultado = nuevoUsuario(filtraCampo($nombre), filtraCampo($apellidos), filtraCampo($username), $contrasena, $rol);
+    $resultado = nuevoUsuario(new Usuario(1, filtraCampo($username), filtraCampo($nombre),  filtraCampo($apellidos) , $contrasena, $rol ));
     if ($resultado[0])
     {
         $message = 'Usuario guardado correctamente.';
