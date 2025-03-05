@@ -190,7 +190,7 @@ function listaTareas()
     }
 }
 
-function nuevaTarea(Tarea $tarea)
+function nuevaTarea(Tarea $tarea) //insert Tarea
 {
     try {
         $conexion = conectaTareas();
@@ -215,7 +215,7 @@ function nuevaTarea(Tarea $tarea)
     }
 }
 
-function actualizaTarea(Tarea $tarea)
+function actualizaTarea(Tarea $tarea) //update Tarea
 {
     try {
         $conexion = conectaTareas();
@@ -242,7 +242,7 @@ function actualizaTarea(Tarea $tarea)
     }
 }
 
-function borraTarea(Tarea $tarea) { 
+function borraTarea(Tarea $tarea) {  //delete Tarea
     try {
         $conexion = conectaTareas();
         $id = $tarea->getId(); 
@@ -270,7 +270,7 @@ function borraTarea(Tarea $tarea) {
 
 
 
-function buscaTarea($id)
+function buscaTarea($id) //select Tarea
 {
     try {
         $conexion = conectaTareas();

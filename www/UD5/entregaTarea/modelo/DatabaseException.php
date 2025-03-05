@@ -1,6 +1,8 @@
 <?php
 
 class DatabaseException extends Exception {
+
+   // Atributos extra: method y sql (4.0)
     private string $method;
     private string $sql;
 

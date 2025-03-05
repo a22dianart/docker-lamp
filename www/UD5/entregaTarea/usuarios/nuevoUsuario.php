@@ -1,6 +1,7 @@
 <?php
 require_once('../login/sesiones.php');
 require_once('../modelo/Usuario.php');
+require_once('../modelo/pdo.php');
 
 if (!checkAdmin()) redirectIndex();
     
@@ -14,25 +15,21 @@ $error = false;
 
 $message = 'Error creando el usuario.';
 
-//verificar nombre
 if (!validarCampoTexto($nombre))
 {
     $error = true;
     $message = 'El campo nombre es obligatorio y debe contener al menos 3 caracteres.';
 }
-//verificar apellidos
 if (!$error && !validarCampoTexto($apellidos))
 {
     $error = true;
     $message = 'El campo apellidos es obligatorio y debe contener al menos 3 caracteres.';
 }
-//verificar username
 if (!$error && !validarCampoTexto($username))
 {
     $error = true;
     $message = 'El campo username es obligatorio y debe contener al menos 3 caracteres.';
 }
-//verificar contrasena
 if (!$error && !validaContrasena($contrasena))
 {
     $error = true;
@@ -40,7 +37,7 @@ if (!$error && !validaContrasena($contrasena))
 }
 if (!$error)
 {
-    require_once('../modelo/pdo.php');
+  
     $resultado = nuevoUsuario(new Usuario(1, filtraCampo($username), filtraCampo($nombre),  filtraCampo($apellidos) , $contrasena, $rol ));
     if ($resultado[0])
     {

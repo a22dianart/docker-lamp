@@ -1,5 +1,7 @@
 <?php
 class Usuario {
+
+    //Propiedades: id, username, nombre, apellidos, contrasena, rol (1.0)
     private int $id;
     private string $username;
     private string $nombre;
@@ -7,6 +9,7 @@ class Usuario {
     private string $contrasena;
     private string $rol;
 
+    // Constructor (1.0)
     public function __construct(int $id, string $username, string $nombre, string $apellidos, string $contrasena, string $rol) {
         $this->id = $id;
         $this->username = $username;

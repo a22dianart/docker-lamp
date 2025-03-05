@@ -3,16 +3,13 @@
 require_once('../login/sesiones.php');
 require_once('../modelo/FicherosDBImp.php');
 require_once('../modelo/mysqli.php');
+require_once('../modelo/Fichero.php');
+require_once('../modelo/pdo.php');
 
 $directorioDestino = "files/"; 
-$maxFileSize = 20 * 1024 * 1024; 
-$tipoPermitido = ['image/jpeg', 'image/png', 'application/pdf']; 
-
 $location = '../tareas.php';
 $response = 'error';
-$messages = array();
-
-$error = false;
+$messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -22,51 +19,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_tarea = $_POST['id_tarea'] ?? '';
     $location = 'subidaFichForm.php?id=' . $id_tarea;
 
+    $data = [
+        'nombre' => $nombreArchivo,
+        'file' => $archivo['name'] ?? '',
+        'size' => $archivo['size'] ?? 0,
+        'descripcion' => $descripcion,
+        'tarea' => buscaTarea($id_tarea)
+    ];
 
-    if (empty($nombreArchivo) || empty($descripcion) || !$archivo || empty($id_tarea)) {
-        array_push($messages, "Todos los campos son obligatorios.");
-        $error = true;
-    }
+    
+    $errors = Fichero::validateFields($data);
 
- 
-    if ($archivo['error'] !== UPLOAD_ERR_OK) {
-        array_push($messages, "Error al subir el archivo.");
-        $error = true;
-    }
-
- 
-    if ($archivo['size'] > $maxFileSize) {
-        array_push($messages, "Error: El archivo excede el tamaño máximo permitido de 20 MB.");
-        $error = true;
-    }
-
-
-    if (!in_array($archivo['type'], $tipoPermitido)) {
-        array_push($messages, "Tipo de archivo no permitido.");
-        $error = true;
-    }
-
-  
-    $codigoAleatorio = bin2hex(random_bytes(8)); 
-    $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
-    $nombreFinal = $codigoAleatorio . '.' . $extension;
-    $rutaDestino = $directorioDestino . $nombreFinal;
-
-
-    if (!is_writable('../' . $directorioDestino)) {
+    if (!empty($errors)) {
+        $messages = array_merge($messages, $errors);
+    } elseif (!is_writable('../' . $directorioDestino)) {
         array_push($messages, "No hay permisos de escritura en la carpeta destino.");
-        $error = true;
-    }
+    } elseif ($archivo['error'] !== UPLOAD_ERR_OK) {
+        array_push($messages, "Error al subir el archivo.");
+    } else {
+    
+        $codigoAleatorio = bin2hex(random_bytes(8));
+        $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+        $nombreFinal = $codigoAleatorio . '.' . $extension;
+        $rutaDestino = $directorioDestino . $nombreFinal;
 
-
-    if (!$error) {
+    
         if (move_uploaded_file($archivo['tmp_name'], '../' . $rutaDestino)) {
             try {
-                require_once('../modelo/pdo.php');
-
                 $ficherosDB = new FicherosDBImp();
-                $fichero = new Fichero($id_tarea, $nombreArchivo, $rutaDestino, $descripcion, buscaTarea($id_tarea));
-                $resultado = $ficherosDB->nuevoFichero($fichero);
+                $fichero = new Fichero(0, $nombreArchivo, $rutaDestino, $descripcion, $data['tarea']);
+                $resultado = $ficherosDB->nuevoFichero($fichero); //Las vistas y controladores hacen uso de la interfaz y la clase (6.0)
 
                 if ($resultado) {
                     $response = 'success';
@@ -89,4 +71,3 @@ $_SESSION['messages'] = $messages;
 
 header("Location: " . $location);
 exit();
-?>

@@ -1,6 +1,8 @@
 <?php
 require_once 'Usuario.php';
 class Tarea {
+
+    // Propiedades: id, titulo, descripcion, estado, usuario (1.0)
     private int $id;
     private string $titulo;
     private string $descripcion;
@@ -8,6 +10,7 @@ class Tarea {
     private Usuario $usuario; 
 
 
+    //Constructor (1.0)
     public function __construct(int $id, string $titulo, string $descripcion, string $estado, Usuario $usuario) {
         $this->id = $id;
         $this->titulo = $titulo;

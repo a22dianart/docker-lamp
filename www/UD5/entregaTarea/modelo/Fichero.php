@@ -2,17 +2,20 @@
 require_once 'Tarea.php'; 
 
 class Fichero {
+
+    //Propiedades: id, nombre, file, descripcion y tarea (1.0)
     private int $id;
     private string $nombre;
     private string $file;
     private string $descripcion;
     private Tarea $tarea;
     
-
+    //Constantes FORMATOS, MAX_SIZE (2.0)
     public const FORMATOS = ['pdf', 'doc', 'docx', 'jpg', 'png'];
     public const MAX_SIZE = 2097152;
 
     
+    // Constructor (1.0)
     public function __construct(int $id, string $nombre, string $file, string $descripcion, Tarea $tarea) {
         $this->id = $id;
         $this->nombre = $nombre;
@@ -56,6 +59,7 @@ class Fichero {
     }
     
 
+    // Método estático de validación (devuelve array asociativo) (4.0)
     public static function validateFields(array $data): array {
         $errors = [];
 
@@ -81,7 +85,7 @@ class Fichero {
             }
         }
 
-
+ 
         if (!empty($data['descripcion']) && strlen($data['descripcion']) > 250) {
             $errors['descripcion'] = 'La descripción no puede tener más de 250 caracteres.';
         }

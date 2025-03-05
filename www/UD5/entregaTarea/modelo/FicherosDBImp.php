@@ -8,6 +8,7 @@ require_once '../modelo/pdo.php';
 
 class FicherosDBImp implements FicherosDBInt {
 
+    // Implementa los métodos (2.0)
     public function listaFicheros($id_tarea): array {
         try {
             $con = conectaPDO();
@@ -29,13 +30,14 @@ class FicherosDBImp implements FicherosDBInt {
             return $ficheros;
 
         } catch (PDOException $e) {
-            throw new DatabaseException("Error al listar ficheros", __METHOD__, "SELECT * FROM ficheros WHERE id_tarea = :id_tarea", 0, $e);
+            // Utilizar esta excepción cuando haya un error de conexión con la base de datos (4.0)
+            throw new DatabaseException("Error al listar ficheros", __METHOD__, "SELECT * FROM ficheros WHERE id_tarea = :id_tarea", 0, $e); 
         } finally {
             $con = null;
         }
     }
 
-    public function buscaFichero($id): ?Fichero {
+    public function buscaFichero($id): ?Fichero { //select Fichero
         try {
             $con = conectaPDO();
             $stmt = $con->prepare("SELECT * FROM ficheros WHERE id = :id");
@@ -62,7 +64,7 @@ class FicherosDBImp implements FicherosDBInt {
         }
     }
 
-    public function borraFichero($id): bool {
+    public function borraFichero($id): bool { //delete Fichero
         try {
             $con = conectaPDO();
             $stmt = $con->prepare("DELETE FROM ficheros WHERE id = :id");
@@ -75,7 +77,7 @@ class FicherosDBImp implements FicherosDBInt {
         }
     }
 
-    public function nuevoFichero(Fichero $fichero): bool {
+    public function nuevoFichero(Fichero $fichero): bool { //insert Fichero
         try {
             $con = conectaPDO();
             $stmt = $con->prepare("INSERT INTO ficheros (nombre, file, descripcion, id_tarea) VALUES (:nombre, :file, :descripcion, :id_tarea)");
