@@ -18,8 +18,7 @@
                 <div class="container justify-content-between">
                 <?php
 
-                    //Si es admin, permitimos sin restricciones todo
-                    //Si es usuario registrado, recuperamos el id de sesión
+                
                     $resultado = null;
                     require_once('../modelo/pdo.php');
                     if (!checkAdmin()){
