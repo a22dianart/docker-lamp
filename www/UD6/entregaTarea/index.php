@@ -3,17 +3,26 @@
 declare(strict_types=1);
 require_once 'flight/Flight.php';
 
-$db = new PDO('mysql:host=db;dbname=agenda;charset=utf8mb4', 'agenda', 'agenda');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-//middleware
-Flight::before('start', function () use ($db) {
+//conexión coa base de datos usando .env
+$host = $_ENV['DATABASE_HOST'];
+$name = $_ENV['DATABASE_NAME'];
+$user = $_ENV['DATABASE_USER'];
+$pass = $_ENV['DATABASE_PASSWORD'];
+
+$db = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass);
+
+
+Flight::before('start', function () use ($db){ //middleware
+    
     $route = Flight::request()->url;
-    if (in_array($route, ['/register', '/login', '/'])) return;
+    if (in_array($route, ['/', '/register', '/login'])) return;
+
     $token = Flight::request()->getHeader('X-Token');
     if (!$token) {
         Flight::halt(401, 'Token no proporcionado');
     }
+
     $stmt = $db->prepare("SELECT * FROM usuarios WHERE token = ?");
     $stmt->execute([$token]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,15 +34,17 @@ Flight::before('start', function () use ($db) {
     Flight::set('user', $user);
 });
 
+
 Flight::route('GET /', function () {
     echo 'API de Agenda funcionando';
 });
 
-//rexistrarse
+
 Flight::route('POST /register', function () use ($db) {
     $data = Flight::request()->data;
-    $stmt = $db->prepare("INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)");
+
     try {
+        $stmt = $db->prepare("INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)");
         $stmt->execute([
             $data['nombre'],
             $data['email'],
@@ -45,7 +56,7 @@ Flight::route('POST /register', function () use ($db) {
     }
 });
 
-//loggearse
+
 Flight::route('POST /login', function () use ($db) {
     $data = Flight::request()->data;
 
@@ -64,12 +75,15 @@ Flight::route('POST /login', function () use ($db) {
     Flight::json(['token' => $token]);
 });
 
-//listar contactos ou buscar por id contacto
-Flight::route('GET /contactos(/@id)', function ($id = null) use ($db) {
+
+
+
+
+Flight::route('GET /contactos(/@id)', function ($id = null) use ($db){
+
     $user = Flight::get('user');
 
     if ($id) {
-
         $stmt = $db->prepare("SELECT * FROM contactos WHERE id = ?");
         $stmt->execute([$id]);
         $contacto = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -84,19 +98,16 @@ Flight::route('GET /contactos(/@id)', function ($id = null) use ($db) {
 
         Flight::json($contacto);
     } else {
-
         $stmt = $db->prepare("SELECT * FROM contactos WHERE usuario_id = ?");
         $stmt->execute([$user['id']]);
         Flight::json($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 });
 
-
-//engadir novo contacto
-Flight::route('POST /contactos', function () use ($db) {
+// Crear contacto
+Flight::route('POST /contactos', function () use ($db){
 
     $user = Flight::get('user');
-
     $data = Flight::request()->data;
 
     $stmt = $db->prepare("INSERT INTO contactos (nombre, telefono, email, usuario_id) VALUES (?, ?, ?, ?)");
@@ -110,12 +121,11 @@ Flight::route('POST /contactos', function () use ($db) {
     Flight::json(['message' => 'Contacto agregado']);
 });
 
-//modificar contacto
-Flight::route('PUT /contactos/@id', function ($id) use ($db) {
+
+Flight::route('PUT /contactos/@id', function ($id) use ($db){
+
     $user = Flight::get('user');
     $data = Flight::request()->data;
-
-
     $stmt = $db->prepare("SELECT * FROM contactos WHERE id = ?");
     $stmt->execute([$id]);
     $contacto = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -123,11 +133,9 @@ Flight::route('PUT /contactos/@id', function ($id) use ($db) {
     if (!$contacto) {
         Flight::halt(404, 'Contacto no encontrado');
     }
-
-    if ($contacto['usuario_id'] != $user['id']) {
+    if ((int)$contacto['usuario_id'] !== (int)$user['id']){
         Flight::halt(403, 'No tienes permiso para editar este contacto');
     }
-
 
     $stmt = $db->prepare("UPDATE contactos SET nombre = ?, telefono = ?, email = ? WHERE id = ?");
     $stmt->execute([
@@ -141,10 +149,9 @@ Flight::route('PUT /contactos/@id', function ($id) use ($db) {
 });
 
 
-//borrar contacto
-Flight::route('DELETE /contactos/@id', function ($id) use ($db) {
-    $user = Flight::get('user');
+Flight::route('DELETE /contactos/@id', function ($id) use ($db){
 
+    $user = Flight::get('user');
     $stmt = $db->prepare("SELECT * FROM contactos WHERE id = ?");
     $stmt->execute([$id]);
     $contacto = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -152,19 +159,14 @@ Flight::route('DELETE /contactos/@id', function ($id) use ($db) {
     if (!$contacto) {
         Flight::halt(404, 'Contacto no encontrado');
     }
-
-
-
     if ((int)$contacto['usuario_id'] !== (int)$user['id']) {
         Flight::halt(403, 'No tienes permiso para borrar este contacto');
     }
-
 
     $stmt = $db->prepare("DELETE FROM contactos WHERE id = ?");
     $stmt->execute([$id]);
 
     Flight::json(['message' => 'Contacto eliminado']);
 });
-
 
 Flight::start();
